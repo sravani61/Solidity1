@@ -1,6 +1,7 @@
 pragma solidity ^0.5.0;
 
 contract AssociateProfitSplitter{
+    // Create three payable addresses representing `employee_one`, `employee_two` and `employee_three`.
     address payable employee_one;
     address payable employee_two;
     address payable employee_three;
@@ -13,29 +14,28 @@ contract AssociateProfitSplitter{
     }
     
     function Balance() public view returns (uint){
-        return msg.sender.balance;
+        return address(this).balance;
     }
     
     function Deposit() public payable{
+        // Split `msg.value` into three
         require(msg.sender == owner);
         uint amount = msg.value/3;
+        // Transfer the amount to each employee
         employee_one.transfer(amount);
         employee_two.transfer(amount);
         employee_three.transfer(amount);
         
+        
+        // take care of a potential remainder by sending back to HR (`msg.sender`)
         msg.sender.transfer(msg.value-(amount * 3));
     }
     
     function() external payable{
+        // Enforce that the `deposit` function is called in the fallback function!
         Deposit();
     }
     
 }
-
-
-
-
-
-
 
 
